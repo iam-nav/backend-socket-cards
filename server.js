@@ -14,7 +14,6 @@ app.use(cors())
 
 io.on('connection', (socket) => {
     console.log("we have new connection")
-
     socket.on('join',({name,room},callback)=>{
     const { error, user } =addUser({ id: socket.id, name, room })     
     if(error) return callback(error);
@@ -28,16 +27,23 @@ io.on('connection', (socket) => {
    })
 
 
-   socket.on('sendcard',({cardnumber,Id})=>{
-    //  console.log(cardnumber,Id)
-    //  let room = getUser(Id).room
-    //  io.sockets.in(room).emit('catchcards',{card:cardnumber});
+   socket.on('sendcard',({cardnumber,Id,room})=>{
+    io.sockets.in(room).emit('catchcards',{card:cardnumber,Id:Id});
    })
 
+   
+   socket.on('addCardToAnotherPlayer',({cards,id,room})=>{
+     console.log(id)
+    io.sockets.in(room).emit('pushCardToOpponet', {cards,id});
+   })
+
+   
+   socket.on('send_From_Specific_Cards',({cardnumber,Id,room})=>{
+    io.sockets.in(room).emit('send_From_Specific_Cards',{card:cardnumber,Id:Id});
+   })
+
+
    socket.on('playgame',({players,room})=>{
-    //  let totalPlayers = Object.keys(players[0]).length
-    //  let shuffles = shuffle(deck())
-    //  let cardsarrange = DistributeCards(shuffles,PlayersJoin(totalPlayers))
       io.in(room).emit('players',({players}));
    })
 
@@ -48,7 +54,6 @@ io.on('connection', (socket) => {
      let totalPlayers = Object.keys(players).length
      let shuffles = shuffle(deck())
      let cardsarrange = DistributeCards(shuffles,PlayersJoin(totalPlayers))
-     console.log(players)
     io.in(room).emit('cards_and_players',({players,cardsarrange}))
    })
 
@@ -60,8 +65,8 @@ io.on('connection', (socket) => {
       // console.log(user)
     // console.log(user["name"])
     // io.in(User).emit('message', ({text:totalUsers}));
-
-    console.log('Got disconnect!');
+    var clients = socket.client.conn.emit.length;
+    console.log('Got disconnect!',clients);
   })
 
 
