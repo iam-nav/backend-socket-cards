@@ -27,19 +27,19 @@ io.on('connection', (socket) => {
    })
 
 
-   socket.on('sendcard',({cardnumber,Id,room})=>{
-    io.sockets.in(room).emit('catchcards',{card:cardnumber,Id:Id});
+   socket.on('sendcard',({cardnumber,Id,room,PlayerTurn})=>{
+    io.sockets.in(room).emit('catchcards',{card:cardnumber,Id:Id,PlayerTurn});
    })
 
    
    socket.on('addCardToAnotherPlayer',({cards,id,room})=>{
-     console.log(id)
-    io.sockets.in(room).emit('pushCardToOpponet', {cards,id});
+
+    io.sockets.in(room).emit('pushCardToOpponet', {cards,id,msg:`Oops! You got ${cards.length} Cards from`});
    })
 
    
-   socket.on('send_From_Specific_Cards',({cardnumber,Id,room})=>{
-    io.sockets.in(room).emit('send_From_Specific_Cards',{card:cardnumber,Id:Id});
+   socket.on('send_From_Specific_Cards',({cardnumber,Id,room,PlayerTurn})=>{
+    io.sockets.in(room).emit('send_From_Specific_Cards',{card:cardnumber,Id:Id,PlayerTurn});
    })
 
 
